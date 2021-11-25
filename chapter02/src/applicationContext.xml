@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- sample01 객체 생성, bean 생성 -->
+	<!-- <bean id="messageBeanImpl" class="sample01.MessageBeanImpl">
+		Constructor Injection 생성자를 통해서 의존 관계를 연결
+		<constructor-arg>
+			<value>딸기</value>
+		</constructor-arg>
+		
+		Setter Injection 세터 메소드를 이용하여 의존 관계를 연결, 필드값 지정
+		<property name="cost">
+			<value>12000</value>
+		</property>
+		<property name="qty" value="5"/>
+	</bean>
+	
+	sample02
+	<bean id="calcAdd" class="sample02.CalcAdd">
+		<constructor-arg>
+			<value>25</value>
+		</constructor-arg>
+		<constructor-arg value="36"/>
+	</bean>
+	
+	<bean id="calcMul" class="sample02.CalcMul">
+		<property name="x">name에는 메소드명 쓰되, set 생략
+			<value>25</value>
+		</property>
+		<property name="y" value="36" />
+	</bean>
+	
+	sample03
+	<bean id="sungJukDTO" class="sample03.SungJukDTO">
+		<property name="name" value="민들레"/>
+		<property name="kor" value="97"/>
+		<property name="eng" value="100"/>
+		<property name="math" value="95"/>
+	</bean>
+	
+	<bean id="sungJukImpl" class="sample03.SungJukImpl">
+		<constructor-arg ref="sungJukDTO"/>
+	</bean>
+	
+	sample04. 생성자 먼저 처리, ref 처리, 세터 순서대로 처리
+	<bean id="messageBeanImpl2" class="sample04.MessageBeanImpl">
+		<constructor-arg value="홍길동"/>1. 생성자 처리
+		<property name="phone" value="010-123-1234"/>4. 세터 처리
+		<property name="outputter" ref="fileOutputter"/>5. 세터 처리
+	</bean>
+	
+	<bean id="fileOutputter" class="sample04.FileOutputter">
+		<property name="filePath" value="D:/Spring/"/>2. ref 처리
+		<property name="fileName" value="result.txt"/>3. ref 처리
+	</bean> -->
+	
+	<!-- sample05 -->
+	<bean id="helloSpring" class="sample05.HelloSpring"></bean><!-- main -->
+	
+	<bean id="sungJukInput" class="sample05.SungJukInput" scope="prototype">
+		<property name="sungJukDTO2" ref="sungJukDTO2"/>
+		<property name="list" ref="arrayList"/>
+	</bean><!-- 싱글톤 해제한 DTO 사용하는 sungJukInput도 싱글톤 해제해야 한다 -->
+	
+	<bean id="sungJukOutput" class="sample05.SungJukOutput">
+		<property name="list" ref="arrayList"/>
+	</bean>
+	
+	<bean id="sungJukModify" class="sample05.SungJukModify">
+		<property name="list" ref="arrayList"/>
+	</bean>
+	
+	<bean id="sungJukDelete" class="sample05.SungJukDelete">
+		<property name="list" ref="arrayList"/>
+	</bean>
+	
+	<bean id="sungJukDTO2" class="sample05.SungJukDTO2" scope="prototype"></bean>
+	
+	<bean id="arrayList" class="java.util.ArrayList"></bean>
+	
+	
+	<!-- sample06 -->
+	<bean id="salaryMain" class="sample06.SalaryMain"></bean>
+
+	<bean id="salaryInput" class="sample06.SalaryInput" scope="prototype">
+		<property name="salaryDTO" ref="salaryDTO"/>
+		<property name="list" ref="arrayList2"/>
+	</bean>
+	
+	<bean id="salaryOutput" class="sample06.SalaryOutput">
+		<property name="list" ref="arrayList2"/>
+	</bean>
+	
+	<bean id="salaryDTO" class="sample06.SalaryDTO" scope="prototype"></bean>
+	
+	<bean id="arrayList2" class="java.util.ArrayList"></bean>
+</beans>

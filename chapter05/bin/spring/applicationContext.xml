@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- Connection Pool & DataSource -->
+	<!-- 1. 첫번째 방법
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>BasicDataSource 클래스의 setDriverClassName 메소드
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="username" value="c##java"/>
+		<property name="password" value="bit"/>
+		<property name="maxTotal" value="20"/>
+		<property name="maxIdle" value="3"/>
+	</bean>
+	 -->
+	<!-- 2. 두번째 방법, property의 네임스페이스를 p로 설정하여, p를 사용
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		  p:driverClassName="oracle.jdbc.driver.OracleDriver"
+		  p:url="jdbc:oracle:thin:@localhost:1521:xe"
+		  p:username="c##java"
+		  p:password="bit"
+		  p:maxTotal="20"
+		  p:maxIdle="3">
+	</bean>
+	-->
+		
+	<!-- 3. 세번째 방법, db.properties 이용 -->
+	<!-- classpath: 뒤에 나오는 문자열이 단순 문자열이 아닌 경로 uri라고 선언하는 것임 -->
+	<context:property-placeholder location="classpath:spring/db.properties"/>
+	   
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		<property name="maxTotal" value="20"/>
+		<property name="maxIdle" value="3"/>
+	</bean>
+	
+	<!-- SqlSessionFactory, mybatis-config.xml 환경설정파일 읽어서 SqlSessionFactory 만든다 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:spring/mybatis-config.xml"/><!-- SqlSessionFactoryBean 클래스의 setConfigLocation 메소드 -->
+		<property name="dataSource" ref="dataSource"/>
+		<property name="mapperLocations" value="classpath:user/dao/userMapper.xml"/><!-- xml에서 경로 표시할 때 . 대신 / -->
+	</bean>
+	
+	<!-- SqlSession, sqlSessionFactory를 통해 생성 -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory"/>
+	</bean>
+	
+	<!-- Transaction, 있어야 @Transactional 사용 가능, 둘 다 쓰는 편이 에러 방지에 좋다 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<bean id="transactionManager" 
+		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<constructor-arg ref="dataSource"/>
+	</bean>
+
+	<bean id="helloSpring" class="user.main.HelloSpring"></bean>
+	
+	<bean id="userInsertService" class="user.service.UserInsertService">
+		<property name="userDTO" ref="userDTO"></property>
+		<property name="userDAO" ref="userDAOMybatis"></property>
+	</bean>
+	
+	<bean id="userSelectService" class="user.service.UserSelectService">
+		<property name="userDAO" ref="userDAOMybatis"></property>
+	</bean>
+	
+	<bean id="userUpdateService" class="user.service.UserUpdateService">
+		<property name="userDAO" ref="userDAOMybatis"></property>
+	</bean>
+	
+	<bean id="userDeleteService" class="user.service.UserDeleteService">
+		<property name="userDAO" ref="userDAOMybatis"></property>
+	</bean>
+	
+	<bean id="userSearchService" class="user.service.UserSearchService">
+		<property name="userDAO" ref="userDAOMybatis"></property>
+	</bean>
+
+	<bean id="userDTO" class="user.bean.UserDTO"></bean>
+	
+	<bean id="userDAOMybatis" class="user.dao.UserDAOMybatis">
+		<property name="sqlSession" ref="sqlSession"></property>
+	</bean>
+</beans>

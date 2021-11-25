@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- sample01 -->
+	<bean id="messageBeanImpl" class="sample01.MessageBeanImpl">
+		<property name="str" value="Have a nice day!!"/><!-- property name값은 setter의 set 생략한 메소드명 -->
+	</bean>
+	
+	<bean id="loggingAdvice" class="sample01.LoggingAdvice"></bean>
+	
+	<!-- AOP -->
+	<aop:config>
+		<aop:pointcut expression="execution(public void sample01.MessageBeanImpl.*Before())" id="beforeMethod"/><!-- 타겟클래스가 여러개면 포인트컷도 여러개이므로, id는 구분자임 -->
+		<aop:pointcut expression="execution(public * *.*.*After(..))" id="afterMethod"/><!-- .. 매개변수 개수 상관없이 사용가능 -->
+		<aop:pointcut expression="execution(public * *.*.*Print(..))" id="aroundMethod"/>
+
+		<aop:aspect ref="loggingAdvice"><!-- ref 공통모듈(부가기능) -->
+			<aop:before method="beforeTrace" pointcut-ref="beforeMethod"/><!-- pointcut-ref 메소드를 삽입할 위치 -->
+			<aop:after method="afterTrace" pointcut-ref="afterMethod"/>
+			<aop:around method="trace" pointcut-ref="aroundMethod"/>
+		</aop:aspect>
+	</aop:config>
+</beans>
